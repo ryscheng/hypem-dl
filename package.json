@@ -1,0 +1,23 @@
+{
+  "name": "youtube-musicvideo",
+  "version": "1.0.0",
+  "description": "Fetches music videos from YouTube",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ryscheng/youtube-musicvideo.git"
+  },
+  "author": "Raymond Cheng <ryscheng@cs.washington.edu> (https://raymondcheng.net)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ryscheng/youtube-musicvideo/issues"
+  },
+  "homepage": "https://github.com/ryscheng/youtube-musicvideo",
+  "dependencies": {
+    "youtube-api": "^0.3.2",
+    "ytdl-core": "^0.5.1"
+  }
+}
