@@ -11,10 +11,7 @@ var rl = readline.createInterface({
 var youtubeKey = process.env.YOUTUBE_KEY;
 var fetch = new Fetcher(youtubeKey);
 
-rl.setPrompt("");
-rl.prompt();
-
-rl.on("line", function(line) {
+var lineHandler = function (line) {
   var dir = path.dirname(line);
   var searchTerms = path.basename(line, path.extname(line));
   //fetch.addToQueue(searchTerms, path.join(dir, searchTerms + ".mp4"));
@@ -22,8 +19,14 @@ rl.on("line", function(line) {
   searchTerms = searchTerms.split(" - ")[0];
   open("https://www.youtube.com/results?search_query="+encodeURIComponent(searchTerms));
 
-  rl.prompt();
-});
+  setTimeout(function() {
+    rl.prompt();
+  }, 1000);
+};
+
+rl.setPrompt("");
+rl.prompt();
+rl.on("line", lineHandler);
 
 rl.on("close", function() {
   fetch.finish(function() {

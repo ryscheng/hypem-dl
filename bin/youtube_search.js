@@ -7,12 +7,7 @@ var rl = readline.createInterface({
   output: process.stdout
 });
 
-var youtubeKey = process.env.YOUTUBE_KEY;
-
-rl.setPrompt("");
-rl.prompt();
-
-rl.on("line", function(line) {
+var lineHandler = function (line) {
   var dir = path.dirname(line);
   var searchTerms = path.basename(line, path.extname(line));
 
@@ -20,7 +15,11 @@ rl.on("line", function(line) {
   open("https://www.youtube.com/results?search_query="+encodeURIComponent(searchTerms));
 
   rl.prompt();
-});
+};
+
+rl.setPrompt("");
+rl.prompt();
+rl.on("line", lineHandler);
 
 rl.on("close", function() {
   process.exit(0);
