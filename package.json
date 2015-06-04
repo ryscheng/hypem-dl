@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/ryscheng/youtube-musicvideo",
   "dependencies": {
+    "glob": "^5.0.10",
     "open": "0.0.5",
     "youtube-api": "^0.3.2",
     "ytdl-core": "^0.5.1"
