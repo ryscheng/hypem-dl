@@ -6,6 +6,13 @@ var MUSIC_EXTENSIONS = [
   ".mp4", ".webm"
 ];
 
+var opts = require("nomnom")
+  .option("run", {
+    abbr: "r",
+    flag: true,
+    help: "Until this flag is set, this is a dry-run"
+  }).parse();
+
 /** GET ARTISTS **/
 var getArtists = function(pattern) {
   var result = {};
@@ -51,6 +58,9 @@ var renameFiles = function(artists) {
     raw = raw.replace(/ medium/g, "");
     raw = raw.replace(/ Official Video/g, "");
     raw = raw.replace(/ Official Music Video/g, "");
+    raw = raw.replace(/ OFFICIAL VIDEO/g, "");
+    raw = raw.replace(/ OFFICIAL MUSIC VIDEO/g, "");
+
     // raw = raw.substring(0, raw.indexOf("_Hype_Machine"));
     // raw = raw.replace(/_/g, " ");
     
@@ -68,7 +78,9 @@ var renameFiles = function(artists) {
     newPath = path.join(directory, raw);
     console.log(raw);
     //console.log(filename + " => " + raw);
-    fs.renameSync(oldPath, newPath);
+    if (opts.run) {
+      fs.renameSync(oldPath, newPath);
+    }
   }
   console.log("Processed " + counter + " filenames");
 }
