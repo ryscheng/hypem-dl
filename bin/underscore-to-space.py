@@ -4,7 +4,7 @@ import sys
 import string
 import os
 
-mediadir = "~/media/MusicVideo"
+mediadir = "/home/ryscheng/Nextcloud/Music/MusicVideo/"
 
 def getArtistsFromDirectory(directory):
   result = set([])
@@ -30,6 +30,7 @@ def getArtistFromFile(filename):
 if __name__ == '__main__':
   argc = 0
   artists = getArtistsFromDirectory(mediadir)
+  print artists
 
   if len(sys.argv) < 2:
     print "python underscore-to-space.py [FILES]"
@@ -40,7 +41,7 @@ if __name__ == '__main__':
       newname = string.replace(newname, "► ", "")
       newname = string.replace(newname, "feat", "ft")
       newname = string.replace(newname, " hd1080", "")
-      newname = string.replace(newname, " The Hype Machine","")
+      newname = string.replace(newname, " The Hype Machine","Hype Machine")
       newname = string.replace(newname, " OFFICIAL VIDEO", "")
       newname = string.replace(newname, " Official Video", "")
       newname = string.replace(newname, " OFFICIAL MUSIC VIDEO", "")
@@ -48,6 +49,15 @@ if __name__ == '__main__':
       newname = string.replace(newname, " Music Video", "")
       newname = string.replace(newname, " MUSIC VIDEO", "")
       newname = string.replace(newname, " hd720", "")
+      newname = string.replace(newname, ".128.mp3", ".mp3")
+
+      # Remove everything after "Hype Machine"
+      start = string.find(newname, " Hype Machine", 0)
+      end = string.find(newname, ".mp3")
+      if start > 0 and end > 0:
+        newname = newname[:start] + ".mp3"
+
+      # Add a dash for known artists
       start = 0
       i = string.find(newname, " ", start)
       while i > -1:
