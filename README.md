@@ -2,6 +2,13 @@
 
 Fetches mp3 files from Hype Machine
 
+## Installation
+
+```bash
+npm install hypem-dl
+# or yarn add hypem-dl
+```
+
 ## Usage
 
 ### Download files
@@ -71,7 +78,7 @@ Download up to 50 tracks at a time from Hype Machine.
 Use the `page` parameter to retrieve more than 50 tracks.
 
 ```bash
-hypem-dl --slug popular
+npx hypem-dl --slug popular
 ```
 
 Options:
