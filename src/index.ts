@@ -1,3 +1,14 @@
-
-import { TrackStatus, getStreamUrls, HypemDownloadArgs, hypemDownloadAll } from "./lib/hypem.js";
-export { TrackStatus, getStreamUrls, HypemDownloadArgs, hypemDownloadAll };
+import {
+  TrackStatus,
+  GetStreamUrlsArgs,
+  getStreamUrls,
+  HypemDownloadArgs,
+  hypemDownload,
+} from "./lib/hypem.js";
+export {
+  TrackStatus,
+  GetStreamUrlsArgs,
+  getStreamUrls,
+  HypemDownloadArgs,
+  hypemDownload,
+};

@@ -12,6 +12,7 @@ npx hypem-dl --slug popular
 ```
 
 Options:
+
 - `--destination DIRECTORY_PATH` - Store files here (Default: user Downloads directory)
 - `--page NUMBER` - Starts at 1 (Default: 1)
 
@@ -31,7 +32,7 @@ Files are named `${artist} - ${title}.mp3`.
 The only required parameter is the `slug`.
 
 ```js
-import { HypemDownloadArgs, hypemDownloadAll } from "hypem-dl";
+import { HypemDownloadArgs, hypemDownload } from "hypem-dl";
 
 // Full list of arguments you can pass in
 const args: HypemDownloadArgs = {
@@ -46,7 +47,7 @@ const args: HypemDownloadArgs = {
   // HTTP Cookie override
   cookie: "COOKIE";
 };
-await hypemDownloadAll({ slug: "popular" });
+await hypemDownload({ slug: "popular" });
 ```
 
 #### Progress reporting
@@ -54,8 +55,8 @@ await hypemDownloadAll({ slug: "popular" });
 Because we download sequentially, the promise exposes an `onProgress` function for responding to progress.
 
 ```js
-const promise = hypemDownloadAll(args);
-promise.onProgress(p => {
+const promise = hypemDownload(args);
+promise.onProgress((p) => {
   // `p` is a value from 0 to 1
   console.log(p);
 });
@@ -68,23 +69,22 @@ This will return information for up to 50 tracks
 leaving it up to you how to use the URLs.
 Use the second `page` parameter to retrieve more than 50 tracks.
 
-
 ```js
-import { TrackStatus, getStreamUrls } from "hypem-dl";
+import { TrackStatus, GetStreamUrlsArgs, getStreamUrls } from "hypem-dl";
 
-const results: TrackStatus[] = await getStreamUrls("popular", 1);
-```
-
-As a third optional parameter, you can override select HTTP headers.
-
-```js
-const headerOverrides = {
-  "User-Agent": "USERAGENT";
-  Cookie: "COOKIES";
+// Full list of arguments you can pass in
+const args: GetStreamUrlsArgs = {
+  // "popular", "latest", or a username
+  slug: "popular";
+  // Which page to retrieve (starts at 1)
+  page: 1;
+  // HTTP User-Agent override
+  userAgent: "USERAGENT";
+  // HTTP Cookie override
+  cookie: "COOKIE";
 };
-const results: TrackStatus[] = await getStreamUrls("popular", 1, headerOverrides);
+const results: TrackStatus[] = await getStreamUrls({ slug: "popular" });
 ```
-
 
 ### Lint
 
@@ -108,7 +108,7 @@ ls | node src/bin/youtube_search.cjs
 ```
 
 This will automatically open the default browser.
-Once you have the YouTube URL you care about, you can use 
+Once you have the YouTube URL you care about, you can use
 [youtube-dl](https://github.com/ytdl-org/youtube-dl)
 to download the media.
 
@@ -119,4 +119,3 @@ I am not affiliated with the company, but I am a proud monthly supporter.
 I built this tool out of an enduring love for the product,
 as I've been using it almost daily for over 10 years now.
 Please keep doing what you're doing 💜💜💜
-

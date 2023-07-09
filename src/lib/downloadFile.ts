@@ -18,9 +18,12 @@ export type DownloadStatus = ADT<{
  * Downloads a URL and stores it in a file
  * @param url
  * @param filename Path to file to store the URL contents
- * @returns 
+ * @returns
  */
-export async function downloadFile(url: string, filename: string): Promise<DownloadStatus> {
+export async function downloadFile(
+  url: string,
+  filename: string,
+): Promise<DownloadStatus> {
   //console.log(`Downloading ${url} to ${filename}`);
 
   // Skip download if file already exists

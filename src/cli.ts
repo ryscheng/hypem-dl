@@ -4,7 +4,7 @@ import path from "path";
 import ora from "ora";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
-import { HypemDownloadArgs, hypemDownloadAll } from "./lib/hypem.js";
+import { hypemDownload } from "./lib/hypem.js";
 
 // If user doesn't specify a destination folder, either use the Downloads folder or a local data folder
 const DEFAULT_DESTINATION = process.env.HOME
@@ -37,18 +37,17 @@ const argv = yargs(hideBin(process.argv))
   .demandOption(["slug"])
   .strict()
   .help("h")
-  .alias("h", "help")
-  .argv;
+  .alias("h", "help").argv;
 
 async function main() {
-  const args = argv as HypemDownloadArgs;
+  const args = await argv;
   console.log("Fetching tracks...");
   console.log(`Downloading to ${args.destination}...`);
 
-  const firstSpinner = ora('Getting streaming URLs').start();
-  const secondSpinner = ora('Downloading tracks');
-  const promise = hypemDownloadAll(args);
-  promise.onProgress(p => {
+  const firstSpinner = ora("Getting streaming URLs").start();
+  const secondSpinner = ora("Downloading tracks");
+  const promise = hypemDownload(args);
+  promise.onProgress((p) => {
     secondSpinner.suffixText = `${Math.round(p * 100.0)}%`;
     if (firstSpinner.isSpinning) {
       firstSpinner.succeed();
@@ -59,16 +58,20 @@ async function main() {
     }
   });
   const results = await promise;
-  const errored = results.filter(r => !["DOWNLOAD_SUCCESS", "DOWNLOAD_SKIPPED"].includes(r._type));
-  const succeeded = results.filter(r => r._type === "DOWNLOAD_SUCCESS");
-  const skipped = results.filter(r => r._type === "DOWNLOAD_SKIPPED");
+  const errored = results.filter(
+    (r) => !["DOWNLOAD_SUCCESS", "DOWNLOAD_SKIPPED"].includes(r._type),
+  );
+  const succeeded = results.filter((r) => r._type === "DOWNLOAD_SUCCESS");
+  const skipped = results.filter((r) => r._type === "DOWNLOAD_SKIPPED");
   ora(`Processed ${results.length} tracks`).start().succeed();
   console.log(`  ${succeeded.length} downloaded`);
   console.log(`  ${skipped.length} skipped`);
   console.log(`  ${errored.length} errors`);
   for (const e of errored) {
     e._type === "NOT_FOUND"
-      ? console.warn(`${e.message}: ${e.trackInfo.artist} - ${e.trackInfo.song}`)
+      ? console.warn(
+          `${e.message}: ${e.trackInfo.artist} - ${e.trackInfo.song}`,
+        )
       : console.warn(`Failed to download ${e.artist} - ${e.title}`);
   }
 }

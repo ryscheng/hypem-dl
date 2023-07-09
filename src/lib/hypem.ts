@@ -57,8 +57,8 @@ const cleanFilename = (s: string) =>
 
 /**
  * Create a filename for a track
- * @param track 
- * @returns 
+ * @param track
+ * @returns
  */
 export function makeFilename(track: TrackStatus) {
   // Throw if it's a missing track
@@ -69,18 +69,32 @@ export function makeFilename(track: TrackStatus) {
 }
 
 /**
+ * Arguments for `getStreamUrls`
+ */
+export interface GetStreamUrlsArgs {
+  // "popular", "latest", or a username
+  slug: string;
+  // Which page to retrieve (starts at 1)
+  page?: number;
+  // HTTP User-Agent override
+  userAgent?: string;
+  // HTTP Cookie override
+  cookie?: string;
+}
+
+/**
  * Retrieve track information from a Hype Machine playlist
  * Results are paginated (only retrieve 50 at a time)
- * @param hypemSlug e.g. "popular", "latest", or a username
- * @param page which page to retrieve (starts at 1)
- * @param headerOverrides
- * @returns 
+ * @param args See `GetStreamUrlsArgs`
+ * @returns
  */
 export async function getStreamUrls(
-  hypemSlug: string,
-  page?: number,
-  headerOverrides?: Partial<HttpHeaders>,
+  args: GetStreamUrlsArgs,
 ): Promise<TrackStatus[]> {
+  const headerOverrides: Partial<HttpHeaders> = {
+    ...(args.userAgent ? { "User-Agent": args.userAgent } : {}),
+    ...(args.cookie ? { Cookie: args.cookie } : {}),
+  };
   // First retrieve the front page to get a cookie
   const frontPageResponse = await fetch(BASE_URL, {
     method: "get",
@@ -93,14 +107,15 @@ export async function getStreamUrls(
   }
 
   // Get the cookie
-  const cookie = headerOverrides?.Cookie ?? frontPageResponse.headers.get("set-cookie");
+  const cookie =
+    headerOverrides?.Cookie ?? frontPageResponse.headers.get("set-cookie");
   if (!cookie) {
     throw new Error("No cookie found");
   }
 
   // Retrieve the playlist page
   //console.log(`Cookie: ${cookie}`);
-  const response = await fetch(`${BASE_URL}/${hypemSlug}/${page ?? ""}`, {
+  const response = await fetch(`${BASE_URL}/${args.slug}/${args.page ?? ""}`, {
     headers: {
       ...HTTP_HEADERS,
       Cookie: cookie,
@@ -161,9 +176,9 @@ export async function getStreamUrls(
           errorMsg = "Unable to retrieve streaming URL";
         }
       } else {
-        errorMsg = "Unable to find the track ID and key"; 
+        errorMsg = "Unable to find the track ID and key";
       }
-      
+
       //console.log(`Skipping track ${JSON.stringify(t)}`);
       return {
         _type: "NOT_FOUND",
@@ -181,62 +196,60 @@ export async function getStreamUrls(
 /**
  * Arguments for downloading tracks from Hype Machine
  */
-export interface HypemDownloadArgs {
+export type HypemDownloadArgs = GetStreamUrlsArgs & {
   // Which local folder to store the mp3 files (defaults to user home downloads folder)
   destination: string;
-  // "popular", "latest", or a username
-  slug: string;
-  // Which page to retrieve (starts at 1)
-  page?: number;
-  // HTTP User-Agent override
-  userAgent?: string;
-  // HTTP Cookie override
-  cookie?: string;
-}
+};
 
 /**
  * Download up to 50 tracks from Hype Machine.
  * Files are downloaded sequentially.
  * Use the `page` parameter to retrieve more than 50 tracks
- * @param args 
+ * @param args See `HypemDownloadArgs`
  */
-export const hypemDownloadAll = (args: HypemDownloadArgs) => pProgress(async progress => {
-  // Get streaming URLs for all tracks from Hype Machine
-  const urlResults = await getStreamUrls(args.slug, args.page, {
-    ...(args.userAgent ? { "User-Agent": args.userAgent } : {}),
-    ...(args.cookie ? { Cookie: args.cookie } : {}),
-  });
+export const hypemDownload = (args: HypemDownloadArgs) =>
+  pProgress(async (progress) => {
+    // Get streaming URLs for all tracks from Hype Machine
+    const urlResults = await getStreamUrls(args);
 
-  // Download each track
-  const results: TrackStatus[] = [];
-  for (let i = 0; i < urlResults.length; i++) {
-    const u = urlResults[i];
-    progress(i / urlResults.length);
+    // Download each track
+    const results: TrackStatus[] = [];
+    for (let i = 0; i < urlResults.length; i++) {
+      const u = urlResults[i];
+      progress(i / urlResults.length);
 
-    if (u._type !== "FOUND") {
-      results.push(u);
-      continue;
-    }
-
-    // Download the file
-    const filename = makeFilename(u);
-    const absPath = path.resolve(args.destination, filename);
-    //console.log(`Downloading to ${filename}`);
-    try {
-      const downloadResp = await downloadFile(u.url, absPath);
-      if (downloadResp._type === "SUCCESS") {
-        results.push({ ...u , _type: "DOWNLOAD_SUCCESS", absolutePath: absPath });
+      if (u._type !== "FOUND") {
+        results.push(u);
         continue;
-      } else if (downloadResp._type === "FILE_EXISTS") {
-        results.push({ ...u, _type: "DOWNLOAD_SKIPPED", absolutePath: absPath });
-        continue;
-      } else {
-        assertNever(downloadResp);
       }
-    } catch (e: any) {
-      results.push({ ...u, _type: "DOWNLOAD_ERROR", message: e.message });
-      continue;
+
+      // Download the file
+      const filename = makeFilename(u);
+      const absPath = path.resolve(args.destination, filename);
+      //console.log(`Downloading to ${filename}`);
+      try {
+        const downloadResp = await downloadFile(u.url, absPath);
+        if (downloadResp._type === "SUCCESS") {
+          results.push({
+            ...u,
+            _type: "DOWNLOAD_SUCCESS",
+            absolutePath: absPath,
+          });
+          continue;
+        } else if (downloadResp._type === "FILE_EXISTS") {
+          results.push({
+            ...u,
+            _type: "DOWNLOAD_SKIPPED",
+            absolutePath: absPath,
+          });
+          continue;
+        } else {
+          assertNever(downloadResp);
+        }
+      } catch (e: any) {
+        results.push({ ...u, _type: "DOWNLOAD_ERROR", message: e.message });
+        continue;
+      }
     }
-  }
-  return results;
-});
+    return results;
+  });

@@ -1,4 +1,3 @@
-
 /**
  * Asserts that a branch is never taken.
  * Useful for exhaustiveness checking.
