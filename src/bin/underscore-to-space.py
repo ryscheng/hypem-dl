@@ -4,7 +4,7 @@ import sys
 import string
 import os
 
-mediadir = "/home/ryscheng/Nextcloud/Music/MusicVideo/"
+mediadir = "/media/Music/MusicVideo/"
 
 def getArtistsFromDirectory(directory):
   result = set([])

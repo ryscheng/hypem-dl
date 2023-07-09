@@ -1,26 +1,53 @@
 {
-  "name": "youtube-musicvideo",
+  "name": "hypem-dl",
   "version": "1.0.0",
-  "description": "Fetches music videos from YouTube",
-  "main": "index.js",
+  "description": "Fetches music from Hype Machine",
+  "bin": "./dist/cli.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "files": [
+    "dist",
+    "README.md",
+    "package.json"
+  ],
+  "engines": {
+    "node": ">=16"
+  },
   "scripts": {
+    "build": "tsc",
+    "start": "ts-node --esm src/cli.ts",
+    "lint": "prettier --write .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ryscheng/youtube-musicvideo.git"
+    "url": "https://github.com/ryscheng/hypem-dl.git"
   },
-  "author": "Raymond Cheng <ryscheng@cs.washington.edu> (https://raymondcheng.net)",
-  "license": "MIT",
+  "author": "Raymond Cheng <me@raymondcheng.net> (https://www.raymondcheng.net)",
+  "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/ryscheng/youtube-musicvideo/issues"
+    "url": "https://github.com/ryscheng/hypem-dl/issues"
   },
-  "homepage": "https://github.com/ryscheng/youtube-musicvideo",
+  "homepage": "https://github.com/ryscheng/hypem-dl",
   "dependencies": {
-    "glob": "^5.0.10",
-    "nomnom": "^1.8.1",
-    "open": "0.0.5",
-    "youtube-api": "^0.3.2",
-    "ytdl-core": "^0.5.1"
+    "chalk": "^5.3.0",
+    "cheerio": "^1.0.0-rc.12",
+    "glob": "^8.1.0",
+    "node-fetch": "^3.3.1",
+    "open": "8.4.1",
+    "ora": "^6.3.1",
+    "p-progress": "^0.6.0",
+    "ts-adt": "^2.1.2",
+    "usetube": "^2.2.7",
+    "yargs": "^17.6.2",
+    "youtube-dl-exec": "^2.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.4.1",
+    "@types/yargs": "^17.0.24",
+    "prettier": "^3.0.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
   }
 }
