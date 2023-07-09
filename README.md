@@ -111,3 +111,12 @@ This will automatically open the default browser.
 Once you have the YouTube URL you care about, you can use 
 [youtube-dl](https://github.com/ytdl-org/youtube-dl)
 to download the media.
+
+## Please support Hype Machine!
+
+Please consider [donating](https://hypem.com/support-us) to support this amazing team.
+I am not affiliated with the company, but I am a proud monthly supporter.
+I built this tool out of an enduring love for the product,
+as I've been using it almost daily for over 10 years now.
+Please keep doing what you're doing 💜💜💜
+
