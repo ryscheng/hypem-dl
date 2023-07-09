@@ -2,14 +2,27 @@
 
 Fetches mp3 files from Hype Machine
 
-## Installation
+## Run as a CLI
+
+Download up to 50 tracks at a time from Hype Machine.
+Use the `page` parameter to retrieve more than 50 tracks.
+
+```bash
+npx hypem-dl --slug popular
+```
+
+Options:
+- `--destination DIRECTORY_PATH` - Store files here (Default: user Downloads directory)
+- `--page NUMBER` - Starts at 1 (Default: 1)
+
+## Use in your codebase
+
+### Installation
 
 ```bash
 npm install hypem-dl
 # or yarn add hypem-dl
 ```
-
-## Usage
 
 ### Download files
 
@@ -72,20 +85,8 @@ const headerOverrides = {
 const results: TrackStatus[] = await getStreamUrls("popular", 1, headerOverrides);
 ```
 
-## Run as a CLI
 
-Download up to 50 tracks at a time from Hype Machine.
-Use the `page` parameter to retrieve more than 50 tracks.
-
-```bash
-npx hypem-dl --slug popular
-```
-
-Options:
-- `--destination DIRECTORY_PATH` - Store files here (Default: user Downloads directory)
-- `--page NUMBER` - Starts at 1 (Default: 1)
-
-## Lint
+### Lint
 
 ```bash
 yarn lint
